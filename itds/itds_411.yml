@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  itdsphp:
+    image: registry.paterva.com/itdsphp:4.1.1
+    restart: unless-stopped
+    depends_on:
+      - itdsdb
+    volumes:
+      - itds_paired_config:/usr/local/paired_config/
+    environment: 
+      DB_HOST: "itdsdb"
+      DB_PORT: 3306
+      DB_PASS: '<set database password>'
+      ENCRYPTION_KEY: '<set encryption key>'
+
+  itdsapache:
+    image: registry.paterva.com/itdsapache:4.1.1
+    restart: unless-stopped
+    ports:
+     - 443:8443
+    environment: 
+      TRANSFORM_TIMEOUT: 600
+      
+  itdsdb:
+    image: registry.paterva.com/itdsdb:4.1.1
+    restart: unless-stopped
+    volumes:
+     - db_data:/var/lib/mysql
+    environment: 
+      MYSQL_ROOT_PASSWORD: "<set database password>"
+
+volumes:
+  itds_paired_config:
+  db_data:
