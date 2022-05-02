@@ -11,8 +11,8 @@ services:
     environment: 
       DB_HOST: "itdsdb"
       DB_PORT: 3306
-      DB_PASS: '<set database password>'
-      ENCRYPTION_KEY: '<set encryption key>'
+      DB_PASS: '<set database password>' # FIXME: CHANGE IT
+      ENCRYPTION_KEY: '<set encryption key>' # FIXME: CHANGE IT
 
   itdsapache:
     image: registry.paterva.com/itdsapache:4.1.1
@@ -28,7 +28,7 @@ services:
     volumes:
      - db_data:/var/lib/mysql
     environment: 
-      MYSQL_ROOT_PASSWORD: "<set database password>"
+      MYSQL_ROOT_PASSWORD: "<set database password>" # FIXME: CHANGE IT
 
 volumes:
   itds_paired_config:

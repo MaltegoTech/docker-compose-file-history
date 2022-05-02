@@ -1,0 +1,78 @@
+version: "3"
+services:
+
+  ctasdispatcher:
+    image: registry.paterva.com/ctasdispatcher:3.1.3
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      POSTGRES_PASSWORD: <set database password> # FIXME: CHANGE IT
+
+  ctastransforms:
+    image: registry.paterva.com/ctastransforms:3.1.3
+    restart: unless-stopped
+    depends_on:
+      - ctasdispatcher
+    environment: 
+      bing_search_service_api_key: ""
+      bing_cognitive_service_api_key: ""
+      ibm_watson_api_key: ""
+      ibm_watson_api_url: ""
+
+  jinx-waybacktransforms:
+    image: registry.paterva.com/jinx-waybacktransforms:3.1.3
+    restart: unless-stopped
+    depends_on:
+      - ctasdispatcher
+
+  jinx-propstransforms:
+    image: registry.paterva.com/jinx-propstransforms:3.1.3
+    restart: unless-stopped
+    depends_on:
+     - ctasdispatcher
+
+  jinx-httptransforms:
+    image: registry.paterva.com/jinx-httptransforms:3.1.3
+    restart: unless-stopped
+    depends_on:
+      - ctasdispatcher
+
+  jinx-builtwith:
+    image: registry.paterva.com/jinx-builtwith:3.1.3
+    restart: unless-stopped
+    depends_on:
+      - ctasdispatcher
+    environment:
+      maltego.legacy.config.builtwith_api_key: ""
+
+  jinx-wikipedia:
+    image: registry.paterva.com/jinx-wikipedia:3.1.3
+    restart: unless-stopped
+    depends_on:
+      - ctasdispatcher
+
+  jinx-pgp:
+    image: registry.paterva.com/jinx-pgp:3.1.3
+    restart: unless-stopped
+    depends_on:
+      - ctasdispatcher
+
+  nginx:
+    image: registry.paterva.com/ctasnginx:3.1.3
+    ports:
+        - '443:8443'
+    restart: unless-stopped
+    depends_on:
+      - ctasdispatcher
+
+  postgres:
+    image: postgres:10
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: <set database password> # FIXME: CHANGE IT
+    volumes:
+      - ctas_db_data:/var/lib/postgresql/data # DB
+
+volumes:
+  ctas_db_data:
