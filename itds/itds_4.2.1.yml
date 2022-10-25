@@ -1,0 +1,35 @@
+version: "3"
+services:
+  itdsphp:
+    image: registry.paterva.com/itdsphp:4.2.1
+    restart: unless-stopped
+    depends_on:
+      - itdsdb
+    volumes:
+      - itds_paired_config:/usr/local/paired_config/
+    environment:
+      DB_HOST: "itdsdb"
+      DB_PORT: 3306
+      DB_PASS: "tasx" # FIXME: CHANGE IT
+      ENCRYPTION_KEY: "7tybhnjmk6205eBNJMK" # FIXME: CHANGE IT
+
+  itdsapache:
+    image: registry.paterva.com/itdsapache:4.2.1
+    restart: unless-stopped
+    ports:
+      - 8000:8000 # Admin UI
+      - 443:8443 # Transform runner
+    environment:
+      TRANSFORM_TIMEOUT: 600
+
+  itdsdb:
+    image: registry.paterva.com/itdsdb:4.2.1
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "tasx" # FIXME: CHANGE IT
+
+volumes:
+  itds_paired_config:
+  db_data:
